@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./gems_store/Dockerfile
+    restart: always
+    container_name: backend
+    volumes:
+      - gems_static_value:/app/web-static/
+      - gems_media_value:/app/web-media/
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+  
+  database:
+    image: postgres:15-alpine
+    restart: always
+    container_name: database
+    ports:
+      - "5432:5432"
+    volumes:
+      - gems_pgdata:/var/lib/postgresql/data/
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 80s
+
+volumes:
+  gems_pgdata:
+    name: gems_pgdata
+  gems_static_value:
+    name: gems_static_value
+  gems_media_value:
+    name: gems_media_value
