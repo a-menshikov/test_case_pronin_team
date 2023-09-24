@@ -2,9 +2,10 @@ import csv
 import io
 from datetime import datetime
 
-from deals.models import Customer, Deal, Item
 from django.db.models import Model
 from django.utils import timezone
+
+from deals.models import Customer, Deal, Item
 
 
 class Service:
