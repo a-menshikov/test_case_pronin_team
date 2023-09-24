@@ -19,7 +19,7 @@ repos:
     rev: 5.12.0
     hooks:
       - id: isort
-        exclude: __init__.py
+        exclude: __init__.py|settings.py|manage.py|migrations
         args: [ --profile, black, --filter-files ]
 
 # Обновляет синтаксис Python кода в соответствии с последними версиями
