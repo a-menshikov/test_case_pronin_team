@@ -2,9 +2,11 @@ import csv
 import io
 from datetime import datetime
 
+from django.conf import settings
 from django.db.models import Model
 from django.utils import timezone
 
+from api.v1.exceptions import FileFormatError
 from deals.models import Customer, Deal, Item
 
 
@@ -41,7 +43,7 @@ class Service:
 
         return result
 
-    def get_unique_values(
+    def __get_unique_values(
         self,
         field_name: str,
         data: list[dict[str, str]],
@@ -52,6 +54,11 @@ class Service:
             unique_values.add(obj[field_name])
         return unique_values
 
+    def __validate_headers(self, headers: list[str]) -> None:
+        """Проверка корректности заголовков."""
+        if sorted(settings.HEADERS_LIST) != sorted(headers):
+            raise FileFormatError
+
     def process_file(self, file: str) -> None:
         """Обработка файла с сделками."""
         io_string = io.StringIO(file)
@@ -59,11 +66,12 @@ class Service:
         headers = list(
             map(str.strip, io_string.readline().split(','))
         )
+        self.__validate_headers(headers)
 
         parsed_data = list(csv.DictReader(io_string, fieldnames=headers))
 
-        customers_values = self.get_unique_values('customer', parsed_data)
-        items_values = self.get_unique_values('item', parsed_data)
+        customers_values = self.__get_unique_values('customer', parsed_data)
+        items_values = self.__get_unique_values('item', parsed_data)
 
         customers = self.__get_objects(Customer, 'login', customers_values)
         items = self.__get_objects(Item, 'name', items_values)

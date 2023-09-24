@@ -1,6 +1,9 @@
 import os
-
 from pathlib import Path
+
+from django.utils.datastructures import MultiValueDictKeyError
+
+from api.v1.exceptions import FileFormatError
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -92,3 +95,20 @@ MEDIA_URL = '/web-media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'web-media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ERROR_MESSAGES = {
+    KeyError: 'В запросе не передан ключ deals',
+    AttributeError: 'В запросе не передан файл',
+    UnicodeDecodeError: 'Кодировка файла не UTF-8',
+    MultiValueDictKeyError: 'В запросе не передан ключ deals',
+    ValueError: (
+        'Некорректные данные в файле. Проверьте, что содержание '
+        'столбца соответствует его заголовку'
+    ),
+    FileFormatError: (
+        'Формат загруженного файла не соответствует требованиям. '
+        'Проверьте названия столбцов.'
+    ),
+}
+
+HEADERS_LIST = ["customer", "item", "total", "quantity", "date"]
