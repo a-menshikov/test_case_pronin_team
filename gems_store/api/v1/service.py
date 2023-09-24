@@ -68,17 +68,18 @@ class Service:
         )
         self.__validate_headers(headers)
 
-        parsed_data = list(csv.DictReader(io_string, fieldnames=headers))
+        read_data = csv.DictReader(io_string, fieldnames=headers)
+        validated_data = [deal for deal in read_data if all(deal.values())]
 
-        customers_values = self.__get_unique_values('customer', parsed_data)
-        items_values = self.__get_unique_values('item', parsed_data)
+        customers_values = self.__get_unique_values('customer', validated_data)
+        items_values = self.__get_unique_values('item', validated_data)
 
         customers = self.__get_objects(Customer, 'login', customers_values)
         items = self.__get_objects(Item, 'name', items_values)
 
         objects_to_create = []
 
-        for deal in parsed_data:
+        for deal in validated_data:
             objects_to_create.append(Deal(
                 customer=customers[deal['customer']],
                 item=items[deal['item']],
