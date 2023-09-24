@@ -60,7 +60,7 @@ class Service:
             raise FileFormatError
 
     def process_file(self, file: str) -> None:
-        """Обработка файла с сделками."""
+        """Обработка файла со сделками."""
         io_string = io.StringIO(file)
 
         headers = list(

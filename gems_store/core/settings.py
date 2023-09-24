@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+from django.db.utils import IntegrityError
 from django.utils.datastructures import MultiValueDictKeyError
 
 from api.v1.exceptions import FileFormatError
@@ -103,7 +104,11 @@ ERROR_MESSAGES = {
     MultiValueDictKeyError: 'В запросе не передан ключ deals',
     ValueError: (
         'Некорректные данные в файле. Проверьте, что содержание '
-        'столбца соответствует его заголовку'
+        'столбцов соответствует заявленному формату данных.'
+    ),
+    IntegrityError: (
+        'Некорректные данные в файле. Проверьте, что содержание '
+        'столбцов соответствует заявленному формату данных.'
     ),
     FileFormatError: (
         'Формат загруженного файла не соответствует требованиям. '
