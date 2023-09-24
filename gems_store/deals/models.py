@@ -68,6 +68,12 @@ class Deal(models.Model):
         verbose_name = 'Сделка'
         verbose_name_plural = 'Сделки'
         ordering = ['-date']
+        constraints = (
+            models.UniqueConstraint(
+                fields=('customer', 'item', 'total', 'quantity', 'date'),
+                name='unique_deal',
+            ),
+        )
 
     def __str__(self) -> str:
         return f'{self.customer} - {self.item}'
