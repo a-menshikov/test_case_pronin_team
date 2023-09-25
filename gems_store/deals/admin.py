@@ -27,4 +27,5 @@ class DealAdmin(admin.ModelAdmin):
 
     list_display = ('id', 'date', 'customer', 'item', 'total', 'quantity')
     list_filter = ('customer', 'item')
+    ordering = ('-date',)
     list_per_page = 50

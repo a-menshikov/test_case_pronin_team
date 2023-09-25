@@ -8,6 +8,7 @@ class Customer(models.Model):
         max_length=128,
         verbose_name='Логин',
         unique=True,
+        db_index=True,
     )
 
     class Meta:
@@ -25,6 +26,7 @@ class Item(models.Model):
         max_length=128,
         verbose_name='Название',
         unique=True,
+        db_index=True,
     )
 
     class Meta:
@@ -67,7 +69,6 @@ class Deal(models.Model):
     class Meta:
         verbose_name = 'Сделка'
         verbose_name_plural = 'Сделки'
-        ordering = ['-date']
         constraints = (
             models.UniqueConstraint(
                 fields=('customer', 'item', 'total', 'quantity', 'date'),
