@@ -97,7 +97,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'web-media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-ERROR_MESSAGES = {
+PARSE_ERROR_MESSAGES = {
     KeyError: 'В запросе не передан ключ deals',
     AttributeError: 'В запросе не передан файл',
     UnicodeDecodeError: 'Кодировка файла не UTF-8',
@@ -117,3 +117,6 @@ ERROR_MESSAGES = {
 }
 
 HEADERS_LIST = ["customer", "item", "total", "quantity", "date"]
+
+TOP_CUSTOMER_LIMIT = 5
+COMMON_GEMS = 2

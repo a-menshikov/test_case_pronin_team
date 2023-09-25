@@ -3,7 +3,7 @@ import io
 from datetime import datetime
 
 from django.conf import settings
-from django.db.models import Model
+from django.db.models import Model, Sum
 from django.utils import timezone
 
 from api.v1.exceptions import FileFormatError
@@ -92,3 +92,38 @@ class Service:
             ))
 
         Deal.objects.bulk_create(objects_to_create, ignore_conflicts=True)
+
+    def get_top_customers(self) -> list[dict[str, str | int | list[str]]]:
+        """Получение списка топ-покупателей со списком камней."""
+        top_customers = Customer.objects.annotate(
+            spent_money=Sum('deals__total'),
+        ).exclude(spent_money__isnull=True).order_by(
+            '-spent_money',
+        )[:settings.TOP_CUSTOMER_LIMIT]
+
+        items_per_customer = Item.objects.filter(
+            deals__customer__in=top_customers
+        ).values_list(
+            'deals__customer__login', 'name'
+        ).distinct()
+
+        customer_gems: dict[str, list[str]] = {
+            obj.login: [] for obj in top_customers
+        }
+        customer_gems_count: dict[str, int] = {}
+
+        for i in items_per_customer:
+            customer_gems[i[0]].append(i[1])
+            customer_gems_count[i[1]] = customer_gems_count.get(i[1], 0) + 1
+
+        result = []
+
+        for customer in top_customers:
+            result.append({
+                'username': customer.login,
+                'spent_money': customer.spent_money,
+                'gems': [i for i in customer_gems[customer.login]
+                         if customer_gems_count[i] >= settings.COMMON_GEMS]
+            })
+
+        return result

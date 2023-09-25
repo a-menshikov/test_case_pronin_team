@@ -1,11 +1,11 @@
 from django.conf import settings
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
+from api.v1.serializers import TopCustomersSerializer
 from api.v1.service import Service
-from deals.models import Customer, Item
-from django.db.models import Sum
 
 service = Service()
 
@@ -18,8 +18,8 @@ def add_deals(request):
         decoded_file = file.read().decode()
         service.process_file(decoded_file)
         return Response(status=status.HTTP_200_OK, data={'Status': 'OK'})
-    except tuple(settings.ERROR_MESSAGES.keys()) as e:
-        error_message = settings.ERROR_MESSAGES[type(e)]
+    except tuple(settings.PARSE_ERROR_MESSAGES.keys()) as e:
+        error_message = settings.PARSE_ERROR_MESSAGES[type(e)]
         return Response(
             status=status.HTTP_400_BAD_REQUEST,
             data={
@@ -32,30 +32,19 @@ def add_deals(request):
 @api_view(['GET'])
 def get_top_customers(request):
     """Получение списка покупателей."""
-    top_customers = Customer.objects.annotate(
-        spent_money=Sum('deals__total'),
-    ).order_by('-spent_money')[:5]
-
-    items_per_customer = Item.objects.filter(
-        deals__customer__in=top_customers
-    ).values_list(
-        'deals__customer__login', 'name'
-    ).distinct()
-
-    response = []
-
-    gems_lists = {obj.login: [] for obj in top_customers}
-    gems_count = {}
-
-    for i in items_per_customer:
-        gems_lists[i[0]].append(i[1])
-        gems_count[i[1]] = gems_count.get(i[1], 0) + 1
-
-    for customer in top_customers:
-        response.append({
-            'username': customer.login,
-            'spent_money': customer.spent_money,
-            'gems': [i for i in gems_lists[customer.login] if gems_count[i] > 1]
-        })
-
-    return Response(status=status.HTTP_200_OK, data={'response': response})
+    response = service.get_top_customers()
+    serializer = TopCustomersSerializer(data=response, many=True)
+    try:
+        serializer.is_valid(raise_exception=True)
+        return Response(
+            status=status.HTTP_200_OK,
+            data={'response': serializer.data},
+        )
+    except ValidationError as e:
+        return Response(
+            status=status.HTTP_400_BAD_REQUEST,
+            data={
+                'Status': 'Error',
+                'Desc': f'Что-то пошло не так. {str(e.detail[0])}',
+            }
+        )
