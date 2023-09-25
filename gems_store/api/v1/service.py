@@ -55,7 +55,7 @@ class Service:
         return unique_values
 
     def __validate_headers(self, headers: list[str]) -> None:
-        """Проверка корректности заголовков."""
+        """Проверка соответствия заголовков формату."""
         if sorted(settings.HEADERS_LIST) != sorted(headers):
             raise FileFormatError
 
