@@ -9,6 +9,6 @@ RUN pip install -r requirements.txt --no-cache-dir
 
 COPY ./gems_store .
 
-RUN chmod +x entrypoint.sh
-
-ENTRYPOINT ["./entrypoint.sh"]
+CMD python3 manage.py migrate && \
+    python3 manage.py collectstatic --no-input && \
+    gunicorn --bind 0:$WEB_PORT core.wsgi:application
