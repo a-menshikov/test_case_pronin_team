@@ -56,6 +56,10 @@ tbf
     docker compose down -v
     ```
 
+## Схема БД проекта
+
+![DB](./readme_images/database.png)
+
 ## Available endpoints
 
 1. Загрузка нового csv-файла для обработки
