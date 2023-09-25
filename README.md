@@ -48,6 +48,95 @@ tbf
     docker compose down -v
     ```
 
+## Доступные ручки
+
+1. Загрузка нового csv-файла для обработки
+
+    ```text
+    http://127.0.0.1:8000/api/v1/add-deals
+    ```
+
+    Предоставленный для тестирования файл разположен в директории /test_case_pronin_team/test_data  
+    Тестирование отправки файла на ручку проводилось через Postman с помощью form-data формата для отправки тела запроса.
+
+    ### Формат запроса
+
+    ```json
+    {
+        "deals": some_file.csv
+    }
+    ```
+
+    ### Возможные ответы
+
+    ```json
+    {
+        "Status": "OK"
+    }
+    ```
+
+    ```json
+    {
+        "Status": "error",
+        "Desc": "description"
+    }
+    ```
+
+2. Получение списка топ-5 покупателей со списком камней
+
+    ```text
+    http://127.0.0.1:8000/api/v1/get-top
+    ```
+
+    ### Пример ответа
+
+    ```json
+    {
+        "response": [
+            {
+                "username": "resplendent",
+                "spent_money": 451731,
+                "gems": [
+                    "Танзанит",
+                    "Рубин",
+                    "Сапфир"
+                ]
+            },
+            {
+                "username": "bellwether",
+                "spent_money": 217794,
+                "gems": [
+                    "Петерсит",
+                    "Сапфир"
+                ]
+            },
+            {
+                "username": "uvulaperfly117",
+                "spent_money": 120419,
+                "gems": [
+                    "Танзанит",
+                    "Петерсит"
+                ]
+            },
+            {
+                "username": "braggadocio",
+                "spent_money": 108957,
+                "gems": [
+                    "Изумруд"
+                ]
+            },
+            {
+                "username": "turophile",
+                "spent_money": 100132,
+                "gems": [
+                    "Рубин",
+                    "Изумруд"
+                ]
+            }
+        ]
+    }
+    ```
+
 ## Контакты
 
 **telegram** [@Menshikov_AS](https://t.me/Menshikov_AS)  
