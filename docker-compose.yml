@@ -14,6 +14,8 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     ports:
       - "8000:8000"
     env_file:
@@ -36,6 +38,23 @@ services:
       retries: 5
       start_period: 80s
 
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    volumes:
+      - gems_redis_data:/data
+    expose:
+      - "6379"
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 80s
+
 volumes:
   gems_pgdata:
     name: gems_pgdata
@@ -43,3 +62,5 @@ volumes:
     name: gems_static_value
   gems_media_value:
     name: gems_media_value
+  gems_redis_data:
+    name: gems_redis_data
