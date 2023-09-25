@@ -120,3 +120,5 @@ HEADERS_LIST = ["customer", "item", "total", "quantity", "date"]
 
 TOP_CUSTOMER_LIMIT = 5
 COMMON_GEMS = 2
+
+CACHE_TIME = 60 * 60

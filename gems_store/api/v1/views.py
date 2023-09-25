@@ -1,4 +1,6 @@
 from django.conf import settings
+from django.core.cache import cache
+from django.views.decorators.cache import cache_page
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
@@ -17,6 +19,7 @@ def add_deals(request):
         file = request.data['deals']
         decoded_file = file.read().decode()
         service.process_file(decoded_file)
+        cache.clear()
         return Response(status=status.HTTP_200_OK, data={'Status': 'OK'})
     except tuple(settings.PARSE_ERROR_MESSAGES.keys()) as e:
         error_message = settings.PARSE_ERROR_MESSAGES[type(e)]
@@ -29,6 +32,7 @@ def add_deals(request):
         )
 
 
+@cache_page(settings.CACHE_TIME)
 @api_view(['GET'])
 def get_top_customers(request):
     """Получение списка покупателей."""
