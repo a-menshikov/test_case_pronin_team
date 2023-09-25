@@ -3,7 +3,7 @@ repos:
     rev: v4.2.0
     hooks:
     -   id: trailing-whitespace  # убирает лишние пробелы
-        exclude: README.md
+        exclude: README.md|entrypoint.sh
     -   id: check-added-large-files  # проверяет тяжелые файлы на изменения
     -   id: check-yaml  # проверяет синтаксис .yaml файлов
     -   id: check-json  # проверяет синтаксис .json файлов
@@ -11,8 +11,9 @@ repos:
     -   id: check-case-conflict  # проверяет файлы, которые могут конфликтовать в файловых системах без учета регистра.
     -   id: check-merge-conflict  # проверяет файлы, содержащие конфликтные строки слияния.
     -   id: double-quote-string-fixer  # заменяет " на '
-        exclude: settings.py|manage.py|migrations
+        exclude: settings.py|manage.py|migrations|entrypoint.sh
     -   id: end-of-file-fixer  # добавляет пустую строку в конце файла
+        exclude: entrypoint.sh
 
 # Обновляет синтаксис Python кода в соответствии с последними версиями
 -   repo: https://github.com/asottile/pyupgrade
@@ -20,7 +21,7 @@ repos:
     hooks:
     -   id: pyupgrade
         args: [--py310-plus]
-        exclude: settings.py|manage.py|migrations
+        exclude: settings.py|manage.py|migrations|entrypoint.sh
 
 # Форматирует код под PEP8
 -   repo: https://github.com/pre-commit/mirrors-autopep8
@@ -28,14 +29,14 @@ repos:
     hooks:
     -   id: autopep8
         args: [--max-line-length=79, --in-place]
-        exclude: settings.py|manage.py|migrations
+        exclude: settings.py|manage.py|migrations|entrypoint.sh
 
 # Сканер стилистических ошибок, нарушающие договоренности PEP8
 -   repo: https://github.com/PyCQA/flake8
     rev: 6.0.0
     hooks:
     -   id: flake8
-        exclude: __init__.py|settings.py|manage.py|migrations
+        exclude: __init__.py|settings.py|manage.py|migrations|entrypoint.sh
         args: ["--ignore=E501,F821", "--max-line-length=79"]
 
 # Проверка статических типов с помощью mypy
@@ -43,5 +44,5 @@ repos:
     rev: v0.991
     hooks:
     -   id: mypy
-        exclude: migrations
+        exclude: migrations|entrypoint.sh
         additional_dependencies: [types-redis, types-requests]
