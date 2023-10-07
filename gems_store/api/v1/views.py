@@ -20,7 +20,7 @@ def add_deals(request):
         decoded_file = file.read().decode()
         service.process_file(decoded_file)
         cache.clear()
-        return Response(status=status.HTTP_200_OK, data={'Status': 'OK'})
+        return Response(status=status.HTTP_201_CREATED, data={'Status': 'OK'})
     except tuple(settings.PARSE_ERROR_MESSAGES.keys()) as e:
         error_message = settings.PARSE_ERROR_MESSAGES[type(e)]
         return Response(
